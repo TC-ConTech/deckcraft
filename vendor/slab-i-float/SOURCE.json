@@ -1,0 +1,45 @@
+{
+  "crate": "i_float",
+  "version": "5.0.0",
+  "upstream": "https://github.com/iShape-Rust/iFloat",
+  "vcs": {
+    "git": {
+      "sha1": "1f3c41ef54bcdd2a7aa8b85b60e2c52c4ffdd543"
+    },
+    "path_in_vcs": ""
+  },
+  "originalFiles": {
+    "Cargo.toml": "ffdfd29827f4478d5d97554f07bb95cfd46a0149f1af82550206dd7a57a0a2dd",
+    "LICENSE": "260cc580f53a756821a0f35475e2cd6da790f8fed0efc058252fe1bed8f2689e",
+    "src/adapter.rs": "2cb146857742c7d41543dea424a31627b8442f7522a2df21dd4212b47e533f37",
+    "src/lib.rs": "355cdff4f1119660d7709ab94edc86659cc6e59f9faf0ffb0cafc0bbad6e51d2",
+    "src/triangle.rs": "1ba7282719e44db5cf612c15c4a4a293ee81173d4e4536f2feb6802bfe2ef1af",
+    "src/float/compatible.rs": "54537a016d26915bd61cddd1c2a46fcffffc52b1c044834949472ca79196fced",
+    "src/float/mod.rs": "52545439e00f0101eefb596ca6b9237b4936a16ac73fcf80bc4045eb7284cb06",
+    "src/float/number.rs": "8fdefda370f89bbe2b425dd0e36c04111bd67f0f64b5992d07c462b3f8b0a27d",
+    "src/float/point.rs": "fef6096c70a5a386f1974d3506c6faa0207f977e315bafad9df01b0e7ffe63e1",
+    "src/float/rect.rs": "45e77f581dc7455f4f1e8dec935ec4deaf0ae367d4b242b636b53231238b6cf3",
+    "src/float/vector.rs": "6e1068639f9216214f9ad070d6928de9fdcdc2c9e2665e4178c76ea25e7613c9",
+    "src/int/mod.rs": "a6ee72c57f9a4283c0beb309d6d84276cf1f4d934aab7fef300590a184f87577",
+    "src/int/point.rs": "54a6cff3830207fb8b201cd404f6c99bfb5cf92290396ff033b205d715e77e98",
+    "src/int/rect.rs": "9fee3254af564217a5f9c6ed1d0119eda3ee326328d442ac6677c1a7c3904c4f",
+    "src/int/unit_vector.rs": "73389437ed65e61ec4a365b26cf41feb411f265ad93e98d231bbd4c200737013",
+    "src/int/vector.rs": "6a005768cf0b9290e6ec83ed729963f0527714c4f0e6cb3c19acd71a15192d28",
+    "src/integration/glam.rs": "8162866bc3403a919545401162be78586fe9a5cb2f1099b79eb745ad6d60462f",
+    "src/integration/mod.rs": "9ff88de42c8509a1963623a996ab3401c96246d984f19abf9c5b7649bfb7afed",
+    "src/int/angle/angle.rs": "10c2c47cd7c4508a39b851e3d51729691215cca4d29264e075ffc78f6e539a06",
+    "src/int/angle/cordic.rs": "f925649cb3b3f36e5340ee82ad37b5605ed1593f19dc8c92e4d8ba9f8389781c",
+    "src/int/angle/mod.rs": "80135078d52db86e9f293148aade89703ddcb2f2daf1dc79f9fb8252b0803084",
+    "src/int/angle/rotation.rs": "ef7cd4d5ccadf6beda87c1e865ba3c2d48a0d206d1306825cf7fe5b82d8ac0b9",
+    "src/int/angle/tests.rs": "e1d124e8fe75e07b1404ebbdb179d9c13c69b30a8051a4b9a9a7b48bef3d2430",
+    "src/int/number/fixed_scale.rs": "7311d33b2cd93b1d09a448eb766462be2465a52b6a4ef6931f51b7f2aaa6154a",
+    "src/int/number/int.rs": "bbd810a58545b005eb9c81066d4969bea9ba14cfc9dadb6638122449edb9aaf2",
+    "src/int/number/mod.rs": "d809786c593e7b9698d5a23bccfa6f100993c993e6caf693967dce99423e480f",
+    "src/int/number/product_uint.rs": "b37195647a92b5c9ae7c2a3497382097250ef14fa5dd231cfcbb362f96550665",
+    "src/int/number/signed_product.rs": "de95e93327a79fc19c71befb9fd9f40cdc3c21cd97605057843974c686dfef13",
+    "src/int/number/uint.rs": "8dc77df5df0d4a01d606a8bd5dc8b42259b7cd8f198bf33b654b975e2a9bb27b",
+    "src/int/number/unit_ratio.rs": "64162abbdbe381f51d2a1336fc3888dc9873746c09364f595e792449e0b8ba74",
+    "src/int/number/wide_int.rs": "96cdb195f7e7016457eb43ed18895aec1aa7790a8026cb867366660129312607"
+  },
+  "changes": "Windows only: native std math forwarding; libm dependency applies only to other platforms, which are not cleared by this audit. All geometric operations/API retained."
+}

@@ -13,6 +13,15 @@ workspace = true
 name = "deckcraft-cli"
 path = "src/main.rs"
 
+[features]
+# --no-default-features keeps the actual CLI/MCP and document engine while
+# excluding optional legacy fonts, installed-font scans and MPL audio fallback.
+default = ["legacy-fallback-font", "system-fonts", "symphonia-audio", "pdf-export"]
+legacy-fallback-font = ["deckcraft-engine/legacy-fallback-font"]
+system-fonts = ["deckcraft-engine/system-fonts"]
+symphonia-audio = ["deckcraft-engine/symphonia-audio"]
+pdf-export = ["deckcraft-engine/pdf-export"]
+
 [dependencies]
 deckcraft-engine = { workspace = true }
 deckcraft-mcp = { workspace = true }

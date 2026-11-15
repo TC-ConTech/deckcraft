@@ -17,6 +17,8 @@
 #![forbid(unsafe_code)]
 
 pub mod audio;
+
+pub const SYMPHONIA_AUDIO_ENABLED: bool = cfg!(feature = "symphonia-audio");
 pub mod clip;
 pub mod feed;
 mod mp4guard;

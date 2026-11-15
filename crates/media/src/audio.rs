@@ -4,14 +4,22 @@
 //! ADTS), ALAC, FLAC, WAV, AIFF, CAF, Vorbis, PCM in MP4 / Matroska — goes through symphonia
 //! (MPL-2.0, used unmodified), with gapless trimming on.
 
+#[cfg(feature = "symphonia-audio")]
 use std::io::Cursor;
 
+#[cfg(feature = "symphonia-audio")]
 use symphonia::core::audio::SampleBuffer;
+#[cfg(feature = "symphonia-audio")]
 use symphonia::core::codecs::{CODEC_TYPE_NULL, DecoderOptions};
+#[cfg(feature = "symphonia-audio")]
 use symphonia::core::errors::Error as SymError;
+#[cfg(feature = "symphonia-audio")]
 use symphonia::core::formats::FormatOptions;
+#[cfg(feature = "symphonia-audio")]
 use symphonia::core::io::{MediaSourceStream, MediaSourceStreamOptions};
+#[cfg(feature = "symphonia-audio")]
 use symphonia::core::meta::MetadataOptions;
+#[cfg(feature = "symphonia-audio")]
 use symphonia::core::probe::Hint;
 
 use crate::{Bytes, Container, MediaError, Result};
@@ -61,8 +69,10 @@ impl Pcm {
 }
 
 /// Bytes as a symphonia source without copying them.
+#[cfg(feature = "symphonia-audio")]
 struct Shared(Bytes);
 
+#[cfg(feature = "symphonia-audio")]
 impl AsRef<[u8]> for Shared {
     fn as_ref(&self) -> &[u8] {
         &self.0
@@ -155,6 +165,7 @@ fn decode_mkv_opus(bytes: &Bytes) -> Option<Result<Pcm>> {
     })())
 }
 
+#[cfg(feature = "symphonia-audio")]
 fn sym_err(e: SymError) -> MediaError {
     match e {
         SymError::Unsupported(what) => MediaError::Unsupported(what.to_string()),
@@ -169,8 +180,10 @@ fn contained<T>(f: impl FnOnce() -> Result<T>) -> Result<T> {
 }
 
 /// Demux errors in a row after which a file is taken to have no more audio.
+#[cfg(feature = "symphonia-audio")]
 const MAX_DEMUX_ERRORS: u32 = 64;
 
+#[cfg(feature = "symphonia-audio")]
 fn decode_symphonia(bytes: &Bytes, ext: &str) -> Result<Pcm> {
     let mss = MediaSourceStream::new(Box::new(Cursor::new(Shared(bytes.clone()))), MediaSourceStreamOptions::default());
     let mut hint = Hint::new();
@@ -265,6 +278,7 @@ fn decode_symphonia(bytes: &Bytes, ext: &str) -> Result<Pcm> {
 }
 
 /// Sample rate, channels and frame count from symphonia's container probe (no decoding).
+#[cfg(feature = "symphonia-audio")]
 pub(crate) fn probe_symphonia(bytes: &Bytes, ext: &str) -> Option<(String, u32, u16, Option<u64>)> {
     let mss = MediaSourceStream::new(Box::new(Cursor::new(Shared(bytes.clone()))), MediaSourceStreamOptions::default());
     let mut hint = Hint::new();
@@ -321,5 +335,28 @@ mod tests {
         let mut b = crate::ASF_HEADER.to_vec();
         b.extend_from_slice(&[0; 64]);
         assert!(matches!(decode(&std::sync::Arc::new(b)), Err(MediaError::Unsupported(_))));
+    }
+}
+
+#[cfg(not(feature = "symphonia-audio"))]
+fn decode_symphonia(_bytes: &Bytes, ext: &str) -> Result<Pcm> {
+    Err(MediaError::Unsupported(format!("{ext} audio: this build has symphonia-audio disabled; native Opus remains available")))
+}
+
+#[cfg(not(feature = "symphonia-audio"))]
+pub(crate) fn probe_symphonia(_bytes: &Bytes, _ext: &str) -> Option<(String, u32, u16, Option<u64>)> {
+    None
+}
+
+#[cfg(all(test, not(feature = "symphonia-audio")))]
+mod restricted_audio_tests {
+    use super::*;
+
+    #[test]
+    fn disabled_audio_fallback_returns_an_explicit_error() {
+        let bytes = std::sync::Arc::new(b"ID3\0\0\0\0\0\0\0\xff\xfb".to_vec());
+        let result = decode(&bytes);
+        assert!(matches!(result, Err(MediaError::Unsupported(ref message)) if message.contains("symphonia-audio disabled")));
+        assert!(probe_symphonia(&bytes, "mp3").is_none());
     }
 }

@@ -350,7 +350,7 @@ pub fn save_bytes(doc: &Presentation, format: &str) -> Result<Vec<u8>> {
         f @ ("pptx" | "potx" | "ppsx") => deckcraft_pptx::export_as(doc, f).map_err(|e| EngineError::Other(e.to_string())),
         "outline" | "txt" => Ok(deckcraft_format::slides_to_outline(doc).into_bytes()),
         "rtf" => Ok(deckcraft_format::rtf::slides_to_rtf(doc).into_bytes()),
-        "pdf" => deckcraft_pdf::export(doc, &Default::default()).map_err(|e| EngineError::Other(e.to_string())),
+        "pdf" => pdf_bytes(doc, &Value::Null),
         "gif" => gif_bytes(doc, &Value::Null),
         "png" | "jpeg" | "jpg" => Err(EngineError::Other("saving a presentation as a single image isn't supported; use file.export".into())),
         _ => deckcraft_format::save(doc).map_err(|e| EngineError::Other(e.to_string())),
@@ -358,11 +358,13 @@ pub fn save_bytes(doc: &Presentation, format: &str) -> Result<Vec<u8>> {
 }
 
 /// Paper sizes for notes and handouts, for the UI's Print page.
+#[cfg(feature = "pdf-export")]
 pub use deckcraft_pdf::{PAPERS, paper_size};
 
 /// PDF options from command params: `{layout: slides|notes|handouts, perPage, dpi, slides,
 /// includeHidden, textLayer, frame, paper: letter|a4|legal|a3, orientation: portrait|landscape}` for a presentation of `count` slides. `slides` is a list of
 /// 0-based indices or a range as typed in PowerPoint's Print page (`"1-3, 5"`, 1-based).
+#[cfg(feature = "pdf-export")]
 pub fn pdf_options(p: &Value, count: usize) -> Result<deckcraft_pdf::PdfOptions> {
     let mut o = deckcraft_pdf::PdfOptions { layout: deckcraft_pdf::PageLayout::Slides, ..Default::default() };
     o.layout = match str_param(p, "layout").unwrap_or("slides") {
@@ -432,8 +434,14 @@ pub fn parse_slide_range(text: &str, count: usize) -> Result<Vec<usize>> {
 }
 
 /// PDF bytes for `doc` with [`pdf_options`] from `p`.
+#[cfg(feature = "pdf-export")]
 pub fn pdf_bytes(doc: &Presentation, p: &Value) -> Result<Vec<u8>> {
     deckcraft_pdf::export(doc, &pdf_options(p, doc.slides.len())?).map_err(|e| EngineError::Other(e.to_string()))
+}
+
+#[cfg(not(feature = "pdf-export"))]
+pub fn pdf_bytes(_doc: &Presentation, _p: &Value) -> Result<Vec<u8>> {
+    Err(EngineError::Other("PDF export is unavailable: this build has pdf-export disabled".into()))
 }
 
 /// The output extensions [`format_for_path`] maps to a writer of that format.

@@ -39,9 +39,27 @@ pub use cmd::{CommandInfo, CommandSpec, command_specs, find_command};
 pub use deckcraft_geom as geom;
 pub use deckcraft_media as media;
 pub use deckcraft_model as model;
+#[cfg(feature = "pdf-export")]
 pub use deckcraft_pdf as pdf;
 pub use deckcraft_render as render;
 pub use tools::{Mods, PointerEvent, PointerKind, ToolKind};
+
+/// Compiled optional capabilities, so callers can detect reduced builds before
+/// asking them to decode media or resolve fonts. This describes this engine,
+/// not a different desktop binary reached through an MCP remote bridge.
+pub fn build_capabilities() -> Value {
+    serde_json::json!({
+        "engine": "deckcraft",
+        "version": env!("CARGO_PKG_VERSION"),
+        "symphoniaAudio": deckcraft_media::SYMPHONIA_AUDIO_ENABLED,
+        "legacyFallbackFont": deckcraft_fonts::LEGACY_FALLBACK_ENABLED,
+        "systemFonts": deckcraft_fonts::SYSTEM_FONTS_ENABLED,
+        "pdfExport": cfg!(feature = "pdf-export"),
+        "fallbackFont": deckcraft_fonts::LAST_RESORT_FAMILY,
+        "audioWithoutSymphonia": ["Ogg Opus", "Matroska/WebM Opus"],
+        "scope": "this engine build; remote desktop capabilities may differ"
+    })
+}
 
 #[derive(Debug, thiserror::Error)]
 pub enum EngineError {

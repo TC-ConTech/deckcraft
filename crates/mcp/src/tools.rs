@@ -65,6 +65,13 @@ const APP_ONLY: &str = " Desktop app only (`deckcraft-cli mcp --connect PORT`)."
 pub fn tool_definitions() -> Vec<Value> {
     vec![
         tool(
+            "build_capabilities",
+            "Build capabilities",
+            "Optional features compiled into this MCP server's engine. Remote desktop capabilities may differ.",
+            obj(json!({}), &[]),
+            true,
+        ),
+        tool(
             "list_commands",
             "List commands",
             "Every command (id, label, ribbon/menu place, shortcut, parameter summary, whether it is enabled now). Filter by a substring of id or label.",
@@ -337,6 +344,7 @@ pub fn call_tool(b: &mut dyn Backend, name: &str, a: &Value) -> ToolResult {
         return ToolResult::error(msg);
     }
     match name {
+        "build_capabilities" => ToolResult::json(&deckcraft_engine::build_capabilities()),
         "list_commands" => wrap(b.call("engine.commands", json!({})).map(|v| {
             let f = a.get("filter").and_then(Value::as_str).unwrap_or("").to_lowercase();
             Value::Array(

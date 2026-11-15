@@ -8,6 +8,13 @@ description = "DeckCraft engine: sessions, undo history, selection, the command 
 [lints]
 workspace = true
 
+[features]
+default = ["legacy-fallback-font", "system-fonts", "symphonia-audio", "pdf-export"]
+legacy-fallback-font = ["deckcraft-fonts/legacy-fallback-font"]
+system-fonts = ["deckcraft-fonts/system-fonts"]
+symphonia-audio = ["deckcraft-media/symphonia-audio"]
+pdf-export = ["dep:deckcraft-pdf"]
+
 [dependencies]
 deckcraft-geom = { workspace = true }
 deckcraft-color = { workspace = true }
@@ -15,7 +22,7 @@ deckcraft-model = { workspace = true }
 deckcraft-fonts = { workspace = true }
 deckcraft-text = { workspace = true }
 deckcraft-render = { workspace = true }
-deckcraft-pdf = { workspace = true }
+deckcraft-pdf = { workspace = true, optional = true }
 deckcraft-format = { workspace = true }
 deckcraft-pptx = { workspace = true }
 deckcraft-media = { workspace = true }

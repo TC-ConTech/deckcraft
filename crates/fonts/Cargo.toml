@@ -8,6 +8,13 @@ description = "DeckCraft fonts: font database (craft-fonts + system), substitute
 [lints]
 workspace = true
 
+[features]
+# Preserve the ordinary app's existing fallback and installed-font behavior.
+# Embedders can instead provide reviewed Inter Regular through CRAFT_FONTS_DIR.
+default = ["legacy-fallback-font", "system-fonts"]
+legacy-fallback-font = ["dep:epaint_default_fonts"]
+system-fonts = []
+
 [dependencies]
 kurbo = { workspace = true }
 skrifa = { workspace = true }
@@ -15,4 +22,4 @@ harfrust = { workspace = true }
 unicode-bidi = { workspace = true }
 log = { workspace = true }
 # Last-resort face only (Ubuntu Light); no UI code.
-epaint_default_fonts = "0.37"
+epaint_default_fonts = { version = "0.37", optional = true }

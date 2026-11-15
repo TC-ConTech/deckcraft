@@ -7,6 +7,12 @@ pub struct Subcommand {
 
 pub const SUBCOMMANDS: &[Subcommand] = &[
     Subcommand {
+        name: "capabilities",
+        usage: "capabilities",
+        summary: "print this build's optional audio and font capabilities as JSON",
+        details: "Reports whether symphonia-audio, legacy-fallback-font, system-fonts and pdf-export were compiled.\nA build without symphonia-audio retains native Opus/video paths and explicitly refuses other audio.\nWithout legacy-fallback-font, CRAFT_FONTS_DIR must supply reviewed Inter Regular at build time.\nWithout pdf-export, PDF requests return an explicit error; PPTX/native/PNG commands remain.",
+    },
+    Subcommand {
         name: "info",
         usage: "info FILE",
         summary: "print a presentation's slides, layouts and theme as JSON",

@@ -133,8 +133,8 @@ fn probe_mp4(bytes: &Bytes) -> Result<MediaInfo> {
         let t = &f.tracks[ti];
         if let Some(e) = t.entries.first() {
             let (rate, channels) = e.audio.as_ref().map(|a| (a.sample_rate.round() as u32, a.channels as u16)).unwrap_or((0, 0));
-            let decodable =
-                matches!(e.codec, CodecConfig::Aac(_) | CodecConfig::Mp3 | CodecConfig::Pcm(_) | CodecConfig::Alac { .. } | CodecConfig::Flac(_));
+            let decodable = cfg!(feature = "symphonia-audio")
+                && matches!(e.codec, CodecConfig::Aac(_) | CodecConfig::Mp3 | CodecConfig::Pcm(_) | CodecConfig::Alac { .. } | CodecConfig::Flac(_));
             info.audio = Some(AudioInfo { codec: codec_name(&e.codec), sample_rate: rate, channels, decodable });
         }
         if t.timescale > 0 {
@@ -170,8 +170,9 @@ fn probe_mkv(bytes: &Bytes) -> Result<MediaInfo> {
             .map(|a| (a.output_sampling_frequency.unwrap_or(a.sampling_frequency).round() as u32, a.channels as u16))
             .unwrap_or((0, 0));
         let rate = if matches!(t.codec, Codec::Opus { .. }) { 48_000 } else { rate };
-        let decodable =
-            matches!(t.codec, Codec::Opus { .. } | Codec::Vorbis { .. } | Codec::Aac { .. } | Codec::Flac { .. } | Codec::Mp3 | Codec::Pcm { .. });
+        let decodable = matches!(t.codec, Codec::Opus { .. })
+            || (cfg!(feature = "symphonia-audio")
+                && matches!(t.codec, Codec::Vorbis { .. } | Codec::Aac { .. } | Codec::Flac { .. } | Codec::Mp3 | Codec::Pcm { .. }));
         info.audio = Some(AudioInfo { codec: mkv_codec_name(&t.codec), sample_rate: rate, channels, decodable });
     }
     Ok(info)

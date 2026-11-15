@@ -52,9 +52,16 @@ fn main() {
     let dir = std::env::var_os("CRAFT_FONTS_DIR").map(PathBuf::from);
     let required = std::env::var_os("CRAFT_FONTS_REQUIRED").is_some();
     let wasm = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|a| a == "wasm32");
-    match input_fonts(dir.as_deref(), wasm, required) {
-        Ok(entries) => src.push_str(&entries),
-        Err(e) if required => println!("cargo::error={e}"),
+    match load_fonts(dir.as_deref(), wasm, required) {
+        Ok(input) => {
+            if std::env::var_os("CARGO_FEATURE_LEGACY_FALLBACK_FONT").is_none()
+                && !input.faces.iter().any(|(family, style)| family == "Inter" && style == "Regular")
+            {
+                println!("cargo::error=legacy-fallback-font is disabled: CRAFT_FONTS_DIR must supply reviewed Inter Regular");
+            }
+            src.push_str(&input.source);
+        }
+        Err(e) if required || std::env::var_os("CARGO_FEATURE_LEGACY_FALLBACK_FONT").is_none() => println!("cargo::error={e}"),
         Err(e) => println!("cargo::warning=building without craft-fonts: {e}"),
     }
     src.push_str("];\n");
@@ -65,6 +72,7 @@ fn main() {
 }
 
 /// One `CraftFont { .. }` initialiser per manifest line.
+#[cfg(test)]
 fn input_fonts(dir: Option<&std::path::Path>, wasm: bool, required: bool) -> Result<String, String> {
     load_fonts(dir, wasm, required).map(|input| input.source)
 }

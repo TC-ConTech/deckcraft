@@ -65,6 +65,10 @@ fn main() -> ExitCode {
             outln!("deckcraft-cli {}", env!("CARGO_PKG_VERSION"));
             ExitCode::SUCCESS
         }
+        Some("capabilities") => {
+            outln!("{}", deckcraft_engine::build_capabilities());
+            ExitCode::SUCCESS
+        }
         Some("info") => report(info(rest)),
         Some("bench") => report(bench(rest)),
         Some("render") => report(render(rest)),

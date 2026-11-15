@@ -17,14 +17,31 @@ pub const FALLBACK_FAMILY: &str = "Inter";
 
 /// The always-available last-resort face (Ubuntu Light, compiled in through
 /// `epaint_default_fonts`; licence in ATTRIBUTION.md).
+#[cfg(feature = "legacy-fallback-font")]
 pub const LAST_RESORT_FAMILY: &str = "Ubuntu";
+#[cfg(not(feature = "legacy-fallback-font"))]
+pub const LAST_RESORT_FAMILY: &str = "Inter";
 
 /// Compiled-in font files: the craft-fonts faces (Latin presentation fonts, then Japanese;
 /// empty without `CRAFT_FONTS_DIR`), then the last-resort face.
 pub fn bundled() -> Vec<&'static [u8]> {
+    #[allow(unused_mut)]
     let mut v: Vec<&'static [u8]> = crate::CRAFT_FONTS.iter().map(|f| f.bytes).collect();
+    #[cfg(feature = "legacy-fallback-font")]
     v.push(epaint_default_fonts::UBUNTU_LIGHT);
     v
+}
+
+fn last_resort_bytes() -> &'static [u8] {
+    #[cfg(feature = "legacy-fallback-font")]
+    {
+        epaint_default_fonts::UBUNTU_LIGHT
+    }
+    #[cfg(not(feature = "legacy-fallback-font"))]
+    {
+        // build.rs requires this exact face when the legacy fallback is off.
+        crate::CRAFT_FONTS.iter().find(|f| f.family == "Inter" && f.style == "Regular").map(|f| f.bytes).unwrap_or_default()
+    }
 }
 
 /// Open substitutes for families documents often ask for but we can't ship (metric-compatible
@@ -595,7 +612,7 @@ fn font_file_ok(meta: &std::fs::Metadata) -> bool {
 /// Empty on wasm.
 pub fn system_font_dirs() -> Vec<std::path::PathBuf> {
     let mut dirs: Vec<std::path::PathBuf> = Vec::new();
-    if cfg!(target_arch = "wasm32") {
+    if cfg!(target_arch = "wasm32") || !cfg!(feature = "system-fonts") {
         return dirs;
     }
     let home = std::env::var_os("HOME").map(std::path::PathBuf::from);
@@ -805,7 +822,7 @@ pub(crate) fn last_resort_face() -> Arc<FontFace> {
         // The font is compiled in (`include_bytes!`), so parsing it can't depend on input; the
         // `last_resort_face_parses` test proves it on every run.
         #[allow(clippy::expect_used)]
-        let face = make_face(FontBytes::Static(epaint_default_fonts::UBUNTU_LIGHT), 0, LAST_RESORT_FAMILY.into(), "Regular".into(), Vec::new())
+        let face = make_face(FontBytes::Static(last_resort_bytes()), 0, LAST_RESORT_FAMILY.into(), "Regular".into(), Vec::new())
             .expect("the compiled-in last-resort face parses");
         Arc::new(face)
     })

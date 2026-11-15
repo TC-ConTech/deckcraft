@@ -63,6 +63,12 @@
   <a href="#license-and-credits">License</a>
 </p>
 
+## Slab local headless build
+
+The local Slab evaluation patch adds explicit audio/font/PDF Cargo features.
+Run `deckcraft-cli capabilities` or MCP `build_capabilities` to inspect them.
+See [the scoped build and its limitations](docs/slab-headless-build.md).
+
 ## What works today
 
 DeckCraft is in alpha, heading for beta (see the [roadmap](ROADMAP.md)).

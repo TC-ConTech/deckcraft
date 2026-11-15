@@ -1,5 +1,21 @@
 # Attribution
 
+## Slab local headless font input
+
+The optional no-default-features headless build uses Inter Regular 4.1 from
+storytold/craft-fonts commit c1db6d1a8ed772191241c3d185e2104be84d8691, original
+rsms/inter v4.1 release extras/ttf/Inter-Regular.ttf. SHA-256:
+40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82.
+Copyright (c) 2016 The Inter Project Authors; SIL OFL-1.1. The exact font and
+complete OFL text are supplied together through CRAFT_FONTS_DIR. No modification
+of the font or standalone font resale is intended. See docs/slab-headless-build.md.
+
+`vendor/slab-i-float` retains i_float 5.0.0 source, Copyright (c) 2023 iShape-Rust,
+under MIT (its complete LICENSE is retained). SOURCE.json records the exact
+published source revision and per-file hashes. Slab changes the Windows-only math
+backend to native std float operations; other platforms retain the upstream libm
+dependency and are outside this audit. The numeric API/operations are retained.
+
 Every asset DeckCraft includes, bundles, embeds at build time or shows in its documentation, with
 its author, source and licence. The policy is in [AGENTS.md](AGENTS.md) §1. `cargo xtask assets`
 fails if a file under `assets/`, `docs/images/` or `docs/brand/` is missing from this table.

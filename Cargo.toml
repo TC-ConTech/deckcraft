@@ -16,17 +16,17 @@ deckcraft-geom = { path = "crates/geom" }
 deckcraft-color = { path = "crates/color" }
 deckcraft-metafile = { path = "crates/metafile" }
 deckcraft-model = { path = "crates/model" }
-deckcraft-fonts = { path = "crates/fonts" }
+deckcraft-fonts = { path = "crates/fonts", default-features = false }
 deckcraft-text = { path = "crates/text" }
 deckcraft-render = { path = "crates/render" }
 deckcraft-pdf = { path = "crates/pdf" }
 deckcraft-pptx = { path = "crates/pptx" }
 deckcraft-format = { path = "crates/format" }
 deckcraft-anim = { path = "crates/anim" }
-deckcraft-engine = { path = "crates/engine" }
+deckcraft-engine = { path = "crates/engine", default-features = false }
 deckcraft-mcp = { path = "crates/mcp" }
 deckcraft-ui-egui = { path = "crates/ui-egui" }
-deckcraft-media = { path = "crates/media" }
+deckcraft-media = { path = "crates/media", default-features = false }
 # video codecs (ported from FilmCraft, same owner and licence)
 deckcraft-bitstream = { path = "crates/bitstream" }
 deckcraft-h264 = { path = "crates/h264" }
@@ -64,7 +64,10 @@ craft-update = { git = "https://github.com/storytold/craft-libs", version = "=0.
 craft-ui = { git = "https://github.com/storytold/craft-libs", rev = "6e03f65bf45181db77ba6229716e6624db9eb25b", version = "=0.1.0" }
 i_overlay = "9"
 quick-xml = "0.41"
-zip = { version = "3", default-features = false, features = ["deflate"] }
+# Same ZIP Deflate format, with an explicit pure-Rust miniz_oxide backend.
+# Avoid the umbrella feature's extra zopfli/zlib-rs implementations.
+zip = { version = "3", default-features = false, features = ["deflate-flate2"] }
+flate2 = { version = "1.1", default-features = false, features = ["rust_backend"] }
 
 # ui
 egui = { version = "0.37", default-features = false }
@@ -107,6 +110,9 @@ codegen-units = 16
 debug = 0
 
 [patch.crates-io]
+# Slab Windows uses native std math for i_float's unchanged numeric API.
+# Other targets retain upstream libm and require a separate audit.
+i_float = { path = "vendor/slab-i-float" }
 krilla = { git = "https://github.com/storytold/craft-libs", rev = "6e03f65bf45181db77ba6229716e6624db9eb25b", version = "=0.8.2" }
 ecolor = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
 emath = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }

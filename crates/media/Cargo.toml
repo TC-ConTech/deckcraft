@@ -8,6 +8,12 @@ description = "DeckCraft media: probing, audio decoding (MP3, AAC/M4A, WAV, AIFF
 [lints]
 workspace = true
 
+[features]
+default = ["symphonia-audio"]
+# Optional MPL-2.0 fallback. Without it, native Opus/video paths remain;
+# other audio decoders report Unsupported instead of pretending to play.
+symphonia-audio = ["dep:symphonia"]
+
 [dependencies]
 # Containers (MP4/MOV, Matroska/WebM, Ogg) and the Opus decoder, shared with the other Craft apps.
 craft-media = { workspace = true, features = ["isobmff", "matroska", "ogg"] }
@@ -21,4 +27,4 @@ log = { workspace = true }
 image = { workspace = true }
 # Audio decoding for the formats we have no decoder of our own for (MPL-2.0, used unmodified,
 # as in FilmCraft).
-symphonia = { version = "0.5.5", default-features = false, features = ["aac", "adpcm", "alac", "flac", "mp1", "mp2", "mp3", "pcm", "vorbis", "wav", "aiff", "caf", "ogg", "mkv", "isomp4"] }
+symphonia = { version = "0.5.5", optional = true, default-features = false, features = ["aac", "adpcm", "alac", "flac", "mp1", "mp2", "mp3", "pcm", "vorbis", "wav", "aiff", "caf", "ogg", "mkv", "isomp4"] }
